@@ -1,36 +1,43 @@
 package app;
 
+import app.graph.IncidenceMatrixPrinter;
+import app.graph.MinimumPathBuilder;
+
 import java.util.Arrays;
 
 public class Main {
 
     public static void main (String[] args) {
 
-        TrainStop ts1 = new TrainStop("stop1");
-        TrainStop ts2 = new TrainStop("stop2");
-        TrainStop ts3 = new TrainStop("stop3");
-        TrainStop ts4 = new TrainStop("stop4");
-        TrainStop ts5 = new TrainStop("stop5");
+        TrainStop ts1 = new TrainStop("A");
+        TrainStop ts2 = new TrainStop("B");
+        TrainStop ts3 = new TrainStop("C");
+        TrainStop ts4 = new TrainStop("D");
+        TrainStop ts5 = new TrainStop("E");
 
-        TrainRoute route = new TrainRoute();
-//        route.setStops(Arrays.asList(ts1, ts2, ts3, ts4, ts5));
-        route.setName("Route1");
+        TrainRoute route = new TrainRoute("Route1");
+        route.addStopHop(ts1, ts2, 5);
+        route.addStopHop(ts2, ts3, 4);
+        route.addStopHop(ts3, ts4, 8);
+        route.addStopHop(ts4, ts3, 8);
+        route.addStopHop(ts4, ts5, 6);
+        route.addStopHop(ts1, ts4, 5);
+        route.addStopHop(ts3, ts5, 2);
+        route.addStopHop(ts5, ts2, 3);
+        route.addStopHop(ts1, ts5, 7);
 
-        TrainRoute route2 = new TrainRoute();
-//        route2.setStops(Arrays.asList(ts1, ts2, ts5));
-        route2.setName("Route2");
+        RouteMapBuilder builder = new RouteMapBuilder(new MinimumPathBuilder());
+        builder.addRoutes(Arrays.asList(route));
 
-        TrainRoute route3 = new TrainRoute();
-//        route3.setStops(Arrays.asList(ts1, ts2, ts4));
-        route3.setName("Route3");
+        builder.buildIncidenceMatrix();
 
-        RouteMapBuilder builder = new RouteMapBuilder();
-        builder.addRoutes(Arrays.asList(route, route2, route3));
+        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
 
         builder.build();
 
-//        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
+        System.out.println("-----------------------");
 
+        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
 
 
     }
