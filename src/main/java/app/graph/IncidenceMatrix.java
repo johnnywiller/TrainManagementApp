@@ -12,14 +12,14 @@ public class IncidenceMatrix<T> {
 
     // used to fast access all nodes
     // there are nodes who don't incide anyone
-    private Set<T> allNodes;
+    private ArrayList<T> allNodes;
 
     public IncidenceMatrix() {
         this.incidenceMatrix = new HashMap<>();
-        this.allNodes = new HashSet<>();
+        this.allNodes = new ArrayList<>();
     }
 
-    public Set<T> getAllVertexes() {
+    public ArrayList<T> getAllVertexes() {
         return allNodes;
     }
 
@@ -42,21 +42,42 @@ public class IncidenceMatrix<T> {
 
     public void addIncidenceNode(T from, IncidenceNode<T> incidenceNode) {
 
-        var incidence = incidenceMatrix
-                .putIfAbsent(from, new LinkedHashSet<>(Arrays.asList(incidenceNode)));
+        ensureInitialListSpace(from);
 
-        if (Objects.nonNull(incidence))
-            incidence.add(incidenceNode);
+        var incidenceList = getIncidenceList(from, incidenceNode.node);
 
-        allNodes.add(from);
-        allNodes.add(incidenceNode.node);
+        // don't have a list of incidences to that vertex yet so add one
+        if (Objects.isNull(incidenceList)) {
+            incidenceList = new IncidenceNodeList<T>(incidenceNode.node);
+            incidenceMatrix.get(from).add(incidenceList);
+        }
+
+        var minimum = incidenceList.getMinimumIncidence();
+
+        if (Objects.isNull(minimum) || minimum.cost > incidenceNode.cost) {
+            incidenceList.setMinimumIncidence(incidenceNode);
+        }
+
+        incidenceList.getIncidencesNodes().add(incidenceNode);
+
+        if (!allNodes.contains(from)) {
+            allNodes.add(from);
+        }
+
+        if (!allNodes.contains(incidenceNode.node)) {
+            allNodes.add(incidenceNode.node);
+        }
+    }
+
+    private void ensureInitialListSpace(T vertex) {
+        incidenceMatrix.putIfAbsent(vertex, new ArrayList<>());
     }
 
     public void replaceIncidenceNode(T from, T to, IncidenceNode replace) {
-        IncidenceNode incidence = getIncidence(from, to);
-        incidence.fromNode = replace.fromNode;
-        incidence.node = replace.node;
-        incidence.cost = replace.cost;
+//        IncidenceNode incidence = getIncidence(from, to);
+//        incidence.fromNode = replace.fromNode;
+//        incidence.node = replace.node;
+//        incidence.cost = replace.cost;
     }
 
     public class Incidence<T> {
@@ -68,6 +89,10 @@ public class IncidenceMatrix<T> {
         public Incidence(T node, List<IncidenceNodeList<T>> incidences) {
             this.node = node;
             this.incidences = incidences;
+        }
+
+        public String toString() {
+            return node.toString();
         }
     }
 }

@@ -2,6 +2,8 @@ package app;
 
 import app.graph.IncidenceMatrixPrinter;
 import app.graph.MinimumPathBuilder;
+import app.graph.MinimumPathBuilder2;
+import app.graph.PathTraversal;
 
 import java.util.Arrays;
 
@@ -26,18 +28,22 @@ public class Main {
         route.addStopHop(ts5, ts2, 3);
         route.addStopHop(ts1, ts5, 7);
 
-        RouteMapBuilder builder = new RouteMapBuilder(new MinimumPathBuilder());
+        RouteMapBuilder builder = new RouteMapBuilder(new MinimumPathBuilder2());
         builder.addRoutes(Arrays.asList(route));
 
         builder.buildIncidenceMatrix();
+//
+//        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
 
-        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
+//        builder.build();
 
-        builder.build();
+        PathTraversal path = new PathTraversal();
+
+        path.buildPossiblePaths(ts3, builder.getIncidenceMatrix());
 
         System.out.println("-----------------------");
 
-        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
+//        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
 
 
     }

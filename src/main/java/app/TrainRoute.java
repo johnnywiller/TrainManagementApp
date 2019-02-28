@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class TrainRoute {
@@ -22,6 +23,11 @@ public class TrainRoute {
         hops.add(new TrainStopHop(from, to, distance));
     }
 
+    @Override
+    public String toString() {
+        return hops.stream().map(TrainStopHop::toString).collect(Collectors.joining(" - "));
+    }
+
     @Data
     class TrainStopHop {
         @NonNull
@@ -30,6 +36,12 @@ public class TrainRoute {
         TrainStop to;
         @NonNull
         Integer distance;
+
+        @Override
+        public String toString() {
+            return String.format("%d->%d[%d]", from, to, distance);
+        }
+
     }
 
 }
