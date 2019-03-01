@@ -1,7 +1,10 @@
 package app.graph;
 
+import lombok.ToString;
+
 import java.util.Objects;
 
+@ToString
 public class PathTraversalConfigurationBuilder<T> {
 
     private T beginWith;
@@ -24,7 +27,7 @@ public class PathTraversalConfigurationBuilder<T> {
 
     private Integer limit;
 
-    private static final Integer DEFAULT_COST = 100;
+    private static final Integer DEFAULT_COST = 20;
 
     private static final Integer MINIMUM_COST = 0;
 
@@ -34,8 +37,6 @@ public class PathTraversalConfigurationBuilder<T> {
 
     private PathTraversalConfigurationBuilder() {
     }
-
-    ;
 
     public PathTraversalConfiguration<T> build() {
         return new PathTraversalConfiguration<>(beginWith,
@@ -83,6 +84,13 @@ public class PathTraversalConfigurationBuilder<T> {
     public PathTraversalConfigurationBuilder<T> beginWithSequence(T... nodes) {
         ensureNonNullNode(nodes);
         this.beginWithSequence = nodes;
+        return this;
+    }
+
+    public PathTraversalConfigurationBuilder<T> withExactlySequence(T... nodes) {
+        ensureNonNullNode(nodes);
+        this.beginWithSequence = nodes;
+        this.exactlyHops = nodes.length - 1;
         return this;
     }
 
@@ -146,4 +154,5 @@ public class PathTraversalConfigurationBuilder<T> {
         if (hops < MINIMUM_HOPS)
             throw new IllegalArgumentException("Invalid hops. Minimum hops is " + MINIMUM_HOPS);
     }
+
 }

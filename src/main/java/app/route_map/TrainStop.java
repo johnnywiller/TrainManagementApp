@@ -1,4 +1,4 @@
-package app;
+package app.route_map;
 
 
 import lombok.AllArgsConstructor;

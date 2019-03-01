@@ -1,6 +1,6 @@
 package app.graph.Interface;
 
-import app.Route;
+import app.route_map.Route;
 import app.graph.PathTraversalConfiguration;
 
 import java.util.List;
