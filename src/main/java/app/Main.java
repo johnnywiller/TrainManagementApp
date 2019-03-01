@@ -1,10 +1,8 @@
 package app;
 
-import app.graph.IncidenceMatrixPrinter;
-import app.graph.MinimumPathBuilder;
-import app.graph.MinimumPathBuilder2;
-import app.graph.PathTraversal;
+import app.graph.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
@@ -17,33 +15,44 @@ public class Main {
         TrainStop ts4 = new TrainStop("D");
         TrainStop ts5 = new TrainStop("E");
 
-        TrainRoute route = new TrainRoute("Route1");
-        route.addStopHop(ts1, ts2, 5);
-        route.addStopHop(ts2, ts3, 4);
-        route.addStopHop(ts3, ts4, 8);
-        route.addStopHop(ts4, ts3, 8);
-        route.addStopHop(ts4, ts5, 6);
-        route.addStopHop(ts1, ts4, 5);
-        route.addStopHop(ts3, ts5, 2);
-        route.addStopHop(ts5, ts2, 3);
-        route.addStopHop(ts1, ts5, 7);
+        ArrayList<StopHop<TrainStop>> hops = new ArrayList<>();
 
-        RouteMapBuilder builder = new RouteMapBuilder(new MinimumPathBuilder2());
-        builder.addRoutes(Arrays.asList(route));
+        hops.add(new StopHop<>(ts1, ts2, 5));
+        hops.add(new StopHop<>(ts2, ts3, 4));
+        hops.add(new StopHop<>(ts3, ts4, 8));
+        hops.add(new StopHop<>(ts4, ts3, 8));
+        hops.add(new StopHop<>(ts4, ts5, 6));
+        hops.add(new StopHop<>(ts1, ts4, 5));
+        hops.add(new StopHop<>(ts3, ts5, 2));
+        hops.add(new StopHop<>(ts5, ts2, 3));
+        hops.add(new StopHop<>(ts1, ts5, 7));
 
-        builder.buildIncidenceMatrix();
-//
-//        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
+        RouteMapBuilder<TrainStop> builder = new RouteMapBuilder<>(new MinimumPathBuilder<>(),
+                new DFSPathTraversal<>());
 
-//        builder.build();
+        builder.addHops(hops);
 
-        PathTraversal path = new PathTraversal();
+        var routeMap = builder.build();
 
-        path.buildPossiblePaths(ts3, builder.getIncidenceMatrix());
+        PathTraversalConfiguration config = PathTraversalConfigurationBuilder
+                .emptyConfiguration()
+                .withMaximumHops(5)
+//                .withExactlyHops(4)
+//                .withExactlyCost(110)
+//                .beginWith(ts2)
+                .endWith(ts3)
+//                .limit(3)
+//                .beginWithSequence(ts1, ts5, ts2, ts3)
+                .build();
 
+//        routeMap.getRoutes(config);
+
+        System.out.println(routeMap.minimumDistanceFrom(ts2, ts2));
+
+//        E, B, C, D, C]
+//      [E, B, C, E, B, C]
+//         [E, B, C]
         System.out.println("-----------------------");
-
-//        IncidenceMatrixPrinter.print(builder.getIncidenceMatrix());
 
 
     }

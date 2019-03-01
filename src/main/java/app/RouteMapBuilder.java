@@ -1,87 +1,52 @@
 package app;
 
-import app.graph.IncidenceMatrix;
 import app.graph.IncidenceNode;
+import app.graph.Interface.IncidenceMatrix;
+import app.graph.Interface.PathTraversalEngine;
+import app.graph.ListIncidenceMatrix;
 import app.graph.MinimumPathBuilder;
-import app.graph.MinimumPathBuilder2;
-import lombok.Getter;
 
 import java.util.List;
 
-public class RouteMapBuilder {
+public class RouteMapBuilder<T> {
 
-    private List<TrainRoute> routes;
+    private List<StopHop<T>> hops;
 
-    @Getter
-    private IncidenceMatrix<TrainStop> incidenceMatrix;
+    private MinimumPathBuilder<T> minimumPathBuilder;
 
-    private MinimumPathBuilder2<TrainStop> pathBuilder;
+    private PathTraversalEngine<T> pathTraversalEngine;
 
-    public RouteMapBuilder(MinimumPathBuilder2<TrainStop> pathBuilder) {
-        this.pathBuilder = pathBuilder;
+    public RouteMapBuilder(MinimumPathBuilder<T> pathBuilder, PathTraversalEngine<T> pathTraversalEngine) {
+        this.minimumPathBuilder = pathBuilder;
+        this.pathTraversalEngine = pathTraversalEngine;
     }
 
-    public RouteMapBuilder addRoutes(List<TrainRoute> routes) {
-        this.routes = routes;
-        this.pathBuilder = pathBuilder;
-        return this;
+    public void addHops(List<StopHop<T>> hops) {
+        this.hops = hops;
     }
 
     public RouteMap build() {
 
-        buildIncidenceMatrix();
+        // we are building incidence matrix two times, must provide a way to clone instead
+        minimumPathBuilder.buildMinimumPath(buildIncidenceMatrix());
 
-        pathBuilder.buildPath(incidenceMatrix);
+        pathTraversalEngine.setIncidenceMatrix(buildIncidenceMatrix());
 
-        var routeMap = new RouteMap();
+        var routeMap = new RouteMap(minimumPathBuilder.getIncidenceMatrix(), pathTraversalEngine);
 
-//        incidenceMatrix.incidences().forEach(incidence -> {
-//
-//            var trainRoute = new TrainRoute(incidence.getNode().getName());
-//
-//            System.out.println(incidence.getNode());
-//
-//            incidence.getIncidences().forEach(incidenceToNode -> {
-//
-//                System.out.println("Minimum incidence from " + incidence.getNode() + " to " + incidenceToNode.getNode() +
-//                " equal to " + incidenceToNode.getMinimumIncidence()
-//                );
-//
-//            });
-//        });
-
-
-        incidenceMatrix.incidences().filter(p -> p.getNode().getName().equals("A"))
-                .map(p -> p.getIncidences())
-                .forEach(System.out::println);
-//                .filter(p -> p.getNode().getName().equals("A"))
-//                .flatMap(p -> p.getIncidences().stream())
-//                .forEach(p -> p.toString());
-
-
-//        incidenceMatrix.incidences()
-//                .filter(p -> p.getNode().getName().equals("A"))
-//                .flatMap(inc -> inc.getIncidences().stream())
-//                .filter(p -> p.getNode().getName().equals("C"))
-//                .forEach(p -> System.out.println("teste"));
-
-        return null;
+        return routeMap;
     }
 
-    public void createRouteMap() {
+    public IncidenceMatrix buildIncidenceMatrix() {
 
+        var incidenceMatrix = new ListIncidenceMatrix<>();
 
-
-    }
-
-    public void buildIncidenceMatrix() {
-
-        this.incidenceMatrix = new IncidenceMatrix<>();
-
-        routes.stream()
-                .flatMap(route -> route.getHops().stream())
+        hops.stream()
                 .forEach(hop -> incidenceMatrix
-                        .addIncidenceNode(hop.from, new IncidenceNode<>(hop.from, hop.to, hop.distance, 1)));
+                        .addOrReplaceIncidenceNode(hop.from,
+                                new IncidenceNode<>(hop.from, hop.to, hop.cost, 1)));
+
+        return incidenceMatrix;
     }
 
 }

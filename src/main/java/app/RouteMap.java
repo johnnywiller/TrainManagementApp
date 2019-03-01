@@ -1,16 +1,27 @@
 package app;
 
+import app.graph.Interface.IncidenceMatrix;
+import app.graph.Interface.PathTraversalEngine;
+import app.graph.PathTraversalConfiguration;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.List;
 
-public class RouteMap {
+@AllArgsConstructor
+public class RouteMap<T> {
 
-    private List<TrainRoute> routes;
+    @Getter
+    private IncidenceMatrix<T> minimumIncidenceMatrix;
 
+    private PathTraversalEngine<T> pathTraversal;
 
-    public void addRoute(TrainRoute trainRoute) {
+    public List<Route<T>> getRoutes(PathTraversalConfiguration<T> config) {
+        return pathTraversal.getPaths(config);
+    }
 
-        routes.add(trainRoute);
-
+    public Integer minimumDistanceFrom(T from, T to) {
+        return minimumIncidenceMatrix.getIncidence(from, to).getCost();
     }
 
 }
