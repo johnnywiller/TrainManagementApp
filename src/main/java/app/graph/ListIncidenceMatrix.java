@@ -1,38 +1,35 @@
 package app.graph;
 
 import app.graph.Interface.IncidenceMatrix;
+import app.graph.Interface.Vertex;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-public class ListIncidenceMatrix<T> implements IncidenceMatrix<T> {
+public class ListIncidenceMatrix<T extends Vertex> implements IncidenceMatrix<T> {
 
     @Getter
-    private HashMap<T, List<IncidenceNode<T>>> incidenceMatrix;
-
-    // used to track nodes that don't have incidence to others
-    private HashMap<T, Void> endNodes;
+    private HashMap<T, HashSet<IncidenceNode<T>>> incidenceMatrix;
 
     public ListIncidenceMatrix() {
-
         this.incidenceMatrix = new HashMap<>();
-        this.endNodes = new HashMap<>();
     }
 
-    public List<T> getAllVertexes() {
-        var all = new ArrayList<T>();
-        all.addAll(incidenceMatrix.keySet());
-        all.addAll(endNodes.keySet());
+    public Set<T> getAllVertexes() {
+        var all = new HashSet<T>(incidenceMatrix.keySet());
         return all;
     }
 
-    public List<IncidenceNode<T>> getAllIncidences(T node) {
+    public Set<IncidenceNode<T>> getAllIncidences(T node) {
         return incidenceMatrix.get(node);
     }
 
     public IncidenceNode<T> getIncidence(T node, T other) {
         return incidenceMatrix
-                .getOrDefault(node, Collections.emptyList())
+                .getOrDefault(node, new HashSet<>()) // empty set to avoid NPE on stream()
                 .stream()
                 .filter(p -> p.getNode().equals(other))
                 .findFirst()
@@ -43,23 +40,25 @@ public class ListIncidenceMatrix<T> implements IncidenceMatrix<T> {
 
         ensureInitialListSpace(from);
 
-        var incidence = getIncidence(from, incidenceNode.node);
+        // if we only add the "from node" with could end up
+        // with missing vertexes in the keys.
+        // So we must ensure destination node is also on the map
+        ensureInitialListSpace(incidenceNode.getNode());
+
+        var incidence = getIncidence(from, incidenceNode.getNode());
 
         // don't have a list of incidences to that vertex yet so add one
         if (Objects.isNull(incidence)) {
             incidenceMatrix.get(from).add(incidenceNode);
         } else {
-            incidence.node = incidenceNode.node;
-            incidence.fromNode = incidenceNode.fromNode;
-            incidence.cost = incidenceNode.cost;
+            incidence.setNode(incidenceNode.getNode());
+            incidence.setFromNode(incidenceNode.getFromNode());
+            incidence.setCost(incidenceNode.getCost());
         }
-
-        endNodes.putIfAbsent(incidenceNode.node, null);
-        endNodes.remove(incidenceNode.fromNode);
     }
 
     private void ensureInitialListSpace(T vertex) {
-        incidenceMatrix.putIfAbsent(vertex, new ArrayList<>());
+        incidenceMatrix.putIfAbsent(vertex, new HashSet<>());
     }
 
 }

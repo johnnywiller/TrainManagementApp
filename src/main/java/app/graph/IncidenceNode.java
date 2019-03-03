@@ -1,14 +1,11 @@
 package app.graph;
 
+import app.graph.Interface.Vertex;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-import java.util.function.ToDoubleBiFunction;
-
 @Data
-@EqualsAndHashCode
-public class IncidenceNode<T> {
+public abstract class IncidenceNode<T extends Vertex> {
 
     @NonNull
     T fromNode;
@@ -20,12 +17,5 @@ public class IncidenceNode<T> {
     // for the reasons that costs are summed up together
     @NonNull
     Integer cost;
-    @NonNull
-    Integer hops;
-
-    @Override
-    public String toString() {
-        return fromNode + "->" + node + " " + cost;
-    }
 
 }

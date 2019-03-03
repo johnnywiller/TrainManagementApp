@@ -1,12 +1,13 @@
 package app.graph;
 
 import app.graph.Interface.IncidenceMatrix;
+import app.graph.Interface.Vertex;
 import lombok.Getter;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public class MinimumPathBuilder<T> {
+public class MinimumPathBuilder<T extends Vertex> {
 
     @Getter
     private IncidenceMatrix<T> incidenceMatrix;
@@ -35,20 +36,20 @@ public class MinimumPathBuilder<T> {
                 if (Objects.isNull(incidenceToPivot))
                     continue;
 
-                traverseFromCurrent(incidenceMatrix, vertexes, currentVertex, incidenceToPivot);
+                traverseFromCurrent(incidenceMatrix, vertexes, currentVertex, (DefaultIncidenceNode) incidenceToPivot);
             }
         }
 
     }
 
     private void traverseFromCurrent(IncidenceMatrix<T> incidenceMatrix,
-                                     List<T> vertexes,
+                                     Set<T> vertexes,
                                      T currentVertex,
-                                     IncidenceNode<T> incidenceToPivot) {
+                                     DefaultIncidenceNode<T> incidenceToPivot) {
 
         for (T indexVertex : vertexes) {
 
-            var incidenceFromPivot = incidenceMatrix.getIncidence(incidenceToPivot.node, indexVertex);
+            var incidenceFromPivot = (DefaultIncidenceNode) incidenceMatrix.getIncidence(incidenceToPivot.node, indexVertex);
 
             var incidenceFromCur = incidenceMatrix.getIncidence(currentVertex, indexVertex);
 
@@ -61,7 +62,7 @@ public class MinimumPathBuilder<T> {
             if (Objects.isNull(incidenceFromCur)) {
 
                 incidenceMatrix.addOrReplaceIncidenceNode(currentVertex,
-                        new IncidenceNode<T>(incidenceToPivot.node,
+                        new DefaultIncidenceNode<T>(incidenceToPivot.node,
                                 indexVertex,
                                 incidenceToPivot.cost + incidenceFromPivot.cost,
                                 incidenceToPivot.hops + incidenceFromPivot.hops));
@@ -71,7 +72,7 @@ public class MinimumPathBuilder<T> {
                 if (incidenceFromCur.cost >
                         incidenceToPivot.cost + incidenceFromPivot.cost) {
 
-                    var newIncidence = new IncidenceNode<>(incidenceToPivot.node,
+                    var newIncidence = new DefaultIncidenceNode<>(incidenceToPivot.node,
                             indexVertex,
                             incidenceToPivot.cost + incidenceFromPivot.cost,
                             incidenceToPivot.hops + incidenceFromPivot.hops);

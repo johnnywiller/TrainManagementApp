@@ -2,13 +2,13 @@ package app.graph.Interface;
 
 import app.graph.IncidenceNode;
 
-import java.util.List;
+import java.util.Set;
 
-public interface IncidenceMatrix<T> {
+public interface IncidenceMatrix<T extends Vertex> {
 
-    List<T> getAllVertexes();
+    Set<T> getAllVertexes();
 
-    List<IncidenceNode<T>> getAllIncidences(T node);
+    Set<IncidenceNode<T>> getAllIncidences(T node);
 
     IncidenceNode<T> getIncidence(T node, T other);
 

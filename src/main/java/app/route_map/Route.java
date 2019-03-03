@@ -1,5 +1,6 @@
 package app.route_map;
 
+import app.graph.Interface.Vertex;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Route<T> {
+public class Route<T extends Vertex> {
 
     private String name;
 

@@ -1,13 +1,12 @@
 package app.graph;
 
+import app.graph.Interface.Vertex;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Objects;
-
 @AllArgsConstructor
 @Getter
-public class PathTraversalConfiguration<T> {
+public class PathTraversalConfiguration<T extends Vertex> {
 
     private T beginWith;
 

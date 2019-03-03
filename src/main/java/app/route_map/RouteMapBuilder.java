@@ -1,52 +1,56 @@
 package app.route_map;
 
-import app.graph.IncidenceNode;
+import app.graph.DefaultParser;
+import app.graph.Interface.GraphParser;
 import app.graph.Interface.IncidenceMatrix;
 import app.graph.Interface.PathTraversalEngine;
+import app.graph.Interface.Vertex;
 import app.graph.ListIncidenceMatrix;
 import app.graph.MinimumPathBuilder;
 
 import java.util.List;
+import java.util.function.Supplier;
 
-public class RouteMapBuilder<T> {
-
-    private List<StopHop<T>> hops;
+public class RouteMapBuilder<T extends Vertex> {
 
     private MinimumPathBuilder<T> minimumPathBuilder;
 
     private PathTraversalEngine<T> pathTraversalEngine;
+
+    private GraphParser<T> graphParser = new DefaultParser<>(new ListIncidenceMatrix<>());
+
+    private IncidenceMatrix<T> minimumIncidenceMatrix;
+
+    private IncidenceMatrix<T> traversalIncidenceMatrix;
 
     public RouteMapBuilder(MinimumPathBuilder<T> pathBuilder, PathTraversalEngine<T> pathTraversalEngine) {
         this.minimumPathBuilder = pathBuilder;
         this.pathTraversalEngine = pathTraversalEngine;
     }
 
-    public void addHops(List<StopHop<T>> hops) {
-        this.hops = hops;
-    }
-
     public RouteMap build() {
 
         // we are building incidence matrix two times, must provide a way to clone instead
-        minimumPathBuilder.buildMinimumPath(buildIncidenceMatrix());
+        minimumPathBuilder.buildMinimumPath(minimumIncidenceMatrix);
 
-        pathTraversalEngine.setIncidenceMatrix(buildIncidenceMatrix());
+        pathTraversalEngine.setIncidenceMatrix(traversalIncidenceMatrix);
 
         var routeMap = new RouteMap(minimumPathBuilder.getIncidenceMatrix(), pathTraversalEngine);
 
         return routeMap;
     }
 
-    public IncidenceMatrix buildIncidenceMatrix() {
+    public RouteMapBuilder<T> fromString(String graph, Supplier<T> supplier) {
 
-        var incidenceMatrix = new ListIncidenceMatrix<>();
+        // we compute incidence matrix 2 times because of different use cases for both
+        // TODO consider implement ListIncidenceMatrix#clone()
+        this.minimumIncidenceMatrix = graphParser
+                .parseFromString(graph, supplier);
 
-        hops.stream()
-                .forEach(hop -> incidenceMatrix
-                        .addOrReplaceIncidenceNode(hop.from,
-                                new IncidenceNode<>(hop.from, hop.to, hop.cost, 1)));
+        this.traversalIncidenceMatrix = graphParser
+                .parseFromString(graph, supplier);
 
-        return incidenceMatrix;
+        return this;
+
     }
-
 }

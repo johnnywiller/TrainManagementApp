@@ -1,21 +1,23 @@
 package app.route_map;
 
 
-import lombok.AllArgsConstructor;
+import app.graph.Interface.Vertex;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 
 @Data
 @EqualsAndHashCode
-public class TrainStop {
+public class TrainStop extends Vertex {
 
-    @NonNull
-    private String name;
+    private String stopInfo;
+
+    public TrainStop() {
+        super();
+    }
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 
 }

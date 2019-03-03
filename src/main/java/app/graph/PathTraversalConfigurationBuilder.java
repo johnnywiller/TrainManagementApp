@@ -1,11 +1,12 @@
 package app.graph;
 
+import app.graph.Interface.Vertex;
 import lombok.ToString;
 
 import java.util.Objects;
 
 @ToString
-public class PathTraversalConfigurationBuilder<T> {
+public class PathTraversalConfigurationBuilder<T extends Vertex> {
 
     private T beginWith;
 

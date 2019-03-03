@@ -1,11 +1,11 @@
 package app.graph.Interface;
 
-import app.route_map.Route;
 import app.graph.PathTraversalConfiguration;
+import app.route_map.Route;
 
 import java.util.List;
 
-public interface PathTraversalEngine<T> {
+public interface PathTraversalEngine<T extends Vertex> {
 
     void setIncidenceMatrix(IncidenceMatrix<T> incidenceMatrix);
 

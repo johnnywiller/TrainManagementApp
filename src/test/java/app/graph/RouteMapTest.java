@@ -1,5 +1,6 @@
 package app.graph;
 
+import app.graph.Interface.Vertex;
 import app.route_map.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RouteMapTest {
 
@@ -31,30 +33,27 @@ class RouteMapTest {
 
     @BeforeEach
     void initializeStopHops() {
+//        tsA = new TrainStop("A");
+//        tsB = new TrainStop("B");
+//        tsC = new TrainStop("C");
+//        tsD = new TrainStop("D");
+//        tsE = new TrainStop("E");
+//
+//        ArrayList<StopHop<TrainStop>> hops = new ArrayList<>();
+//
+//        // TODO parametrize distances
+//        hops.add(new StopHop<>(tsA, tsB, distances[a][b]));
+//        hops.add(new StopHop<>(tsB, tsC, distances[b][c]));
+//        hops.add(new StopHop<>(tsC, tsD, distances[c][d]));
+//        hops.add(new StopHop<>(tsD, tsC, distances[d][c]));
+//        hops.add(new StopHop<>(tsD, tsE, distances[d][e]));
+//        hops.add(new StopHop<>(tsA, tsD, distances[a][d]));
+//        hops.add(new StopHop<>(tsC, tsE, distances[c][e]));
+//        hops.add(new StopHop<>(tsE, tsB, distances[e][b]));
+//        hops.add(new StopHop<>(tsA, tsE, distances[a][e]));
 
-        tsA = new TrainStop("A");
-        tsB = new TrainStop("B");
-        tsC = new TrainStop("C");
-        tsD = new TrainStop("D");
-        tsE = new TrainStop("E");
-
-        ArrayList<StopHop<TrainStop>> hops = new ArrayList<>();
-
-        // TODO parametrize distances
-        hops.add(new StopHop<>(tsA, tsB, distances[a][b]));
-        hops.add(new StopHop<>(tsB, tsC, distances[b][c]));
-        hops.add(new StopHop<>(tsC, tsD, distances[c][d]));
-        hops.add(new StopHop<>(tsD, tsC, distances[d][c]));
-        hops.add(new StopHop<>(tsD, tsE, distances[d][e]));
-        hops.add(new StopHop<>(tsA, tsD, distances[a][d]));
-        hops.add(new StopHop<>(tsC, tsE, distances[c][e]));
-        hops.add(new StopHop<>(tsE, tsB, distances[e][b]));
-        hops.add(new StopHop<>(tsA, tsE, distances[a][e]));
-
-        RouteMapBuilder<TrainStop> builder = new RouteMapBuilder<>(new MinimumPathBuilder<>(),
-                new DFSPathTraversal<>());
-
-        builder.addHops(hops);
+        RouteMapBuilder<TrainStop> builder = new RouteMapBuilder<TrainStop>(new MinimumPathBuilder<>(),
+                new DFSPathTraversal<>()).fromString("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7", TrainStop::new);
 
         routeMap = builder.build();
     }

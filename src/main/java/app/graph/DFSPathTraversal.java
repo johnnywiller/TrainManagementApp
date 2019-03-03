@@ -1,14 +1,15 @@
 package app.graph;
 
-import app.route_map.Route;
 import app.graph.Interface.IncidenceMatrix;
 import app.graph.Interface.PathTraversalEngine;
+import app.graph.Interface.Vertex;
+import app.route_map.Route;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DFSPathTraversal<T> implements PathTraversalEngine<T> {
+public class DFSPathTraversal<T extends Vertex> implements PathTraversalEngine<T> {
 
     private IncidenceMatrix<T> incidenceMatrix;
 
