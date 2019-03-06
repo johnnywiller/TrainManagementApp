@@ -3,7 +3,7 @@ package app.graph;
 import app.graph.Interface.IncidenceMatrix;
 import app.graph.Interface.PathTraversalEngine;
 import app.graph.Interface.Vertex;
-import app.route_map.Route;
+import app.routemap.Route;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,12 +59,12 @@ public class DFSPathTraversal<T extends Vertex> implements PathTraversalEngine<T
 
         for (IncidenceNode<T> incidence : incidenceMatrix.getAllIncidences(node)) {
 
-            T next = incidence.node;
+            T next = incidence.getNode();
 
             stops.add(next);
 
             var _hops = hops + 1;
-            var _cost = cost + incidence.cost;
+            var _cost = cost + incidence.getCost();
 
             boolean canApplyRoute = traversePath(config, stops, routeStore, next, _hops, _cost);
 

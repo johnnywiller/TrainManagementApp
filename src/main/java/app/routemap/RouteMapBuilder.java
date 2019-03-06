@@ -1,4 +1,4 @@
-package app.route_map;
+package app.routemap;
 
 import app.graph.DefaultParser;
 import app.graph.Interface.GraphParser;
@@ -8,7 +8,6 @@ import app.graph.Interface.Vertex;
 import app.graph.ListIncidenceMatrix;
 import app.graph.MinimumPathBuilder;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public class RouteMapBuilder<T extends Vertex> {
@@ -17,7 +16,7 @@ public class RouteMapBuilder<T extends Vertex> {
 
     private PathTraversalEngine<T> pathTraversalEngine;
 
-    private GraphParser<T> graphParser = new DefaultParser<>(new ListIncidenceMatrix<>());
+    private GraphParser<T> graphParser = new DefaultParser<>();
 
     private IncidenceMatrix<T> minimumIncidenceMatrix;
 
@@ -45,10 +44,10 @@ public class RouteMapBuilder<T extends Vertex> {
         // we compute incidence matrix 2 times because of different use cases for both
         // TODO consider implement ListIncidenceMatrix#clone()
         this.minimumIncidenceMatrix = graphParser
-                .parseFromString(graph, supplier);
+                .parseFromString(graph, supplier, new ListIncidenceMatrix<>());
 
         this.traversalIncidenceMatrix = graphParser
-                .parseFromString(graph, supplier);
+                .parseFromString(graph, supplier, new ListIncidenceMatrix<>());
 
         return this;
 

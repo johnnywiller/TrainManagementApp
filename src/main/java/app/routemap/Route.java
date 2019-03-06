@@ -1,4 +1,4 @@
-package app.route_map;
+package app.routemap;
 
 import app.graph.Interface.Vertex;
 import lombok.EqualsAndHashCode;

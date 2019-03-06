@@ -49,7 +49,7 @@ public class MinimumPathBuilder<T extends Vertex> {
 
         for (T indexVertex : vertexes) {
 
-            var incidenceFromPivot = (DefaultIncidenceNode) incidenceMatrix.getIncidence(incidenceToPivot.node, indexVertex);
+            var incidenceFromPivot = (DefaultIncidenceNode) incidenceMatrix.getIncidence(incidenceToPivot.getNode(), indexVertex);
 
             var incidenceFromCur = incidenceMatrix.getIncidence(currentVertex, indexVertex);
 
@@ -62,19 +62,19 @@ public class MinimumPathBuilder<T extends Vertex> {
             if (Objects.isNull(incidenceFromCur)) {
 
                 incidenceMatrix.addOrReplaceIncidenceNode(currentVertex,
-                        new DefaultIncidenceNode<T>(incidenceToPivot.node,
+                        new DefaultIncidenceNode<T>(incidenceToPivot.getNode(),
                                 indexVertex,
-                                incidenceToPivot.cost + incidenceFromPivot.cost,
+                                incidenceToPivot.getCost() + incidenceFromPivot.getCost(),
                                 incidenceToPivot.hops + incidenceFromPivot.hops));
             }
             // comparece costs and replace incidence
             else {
-                if (incidenceFromCur.cost >
-                        incidenceToPivot.cost + incidenceFromPivot.cost) {
+                if (incidenceFromCur.getCost() >
+                        incidenceToPivot.getCost() + incidenceFromPivot.getCost()) {
 
-                    var newIncidence = new DefaultIncidenceNode<>(incidenceToPivot.node,
+                    var newIncidence = new DefaultIncidenceNode<>(incidenceToPivot.getNode(),
                             indexVertex,
-                            incidenceToPivot.cost + incidenceFromPivot.cost,
+                            incidenceToPivot.getCost() + incidenceFromPivot.getCost(),
                             incidenceToPivot.hops + incidenceFromPivot.hops);
 
                     incidenceMatrix.addOrReplaceIncidenceNode(currentVertex, newIncidence);

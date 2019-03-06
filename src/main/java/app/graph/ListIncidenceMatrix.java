@@ -28,9 +28,13 @@ public class ListIncidenceMatrix<T extends Vertex> implements IncidenceMatrix<T>
     }
 
     public IncidenceNode<T> getIncidence(T node, T other) {
+        incidenceMatrix.getOrDefault(node, new HashSet<>()).stream().forEach(inc -> inc.getNode().equals(""));
+
         return incidenceMatrix
                 .getOrDefault(node, new HashSet<>()) // empty set to avoid NPE on stream()
+
                 .stream()
+
                 .filter(p -> p.getNode().equals(other))
                 .findFirst()
                 .orElse(null);

@@ -1,11 +1,12 @@
 package app.graph;
 
-import app.graph.Interface.Vertex;
-import app.route_map.*;
+import app.routemap.Route;
+import app.routemap.RouteMap;
+import app.routemap.RouteMapBuilder;
+import app.routemap.TrainStop;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,24 +34,11 @@ class RouteMapTest {
 
     @BeforeEach
     void initializeStopHops() {
-//        tsA = new TrainStop("A");
-//        tsB = new TrainStop("B");
-//        tsC = new TrainStop("C");
-//        tsD = new TrainStop("D");
-//        tsE = new TrainStop("E");
-//
-//        ArrayList<StopHop<TrainStop>> hops = new ArrayList<>();
-//
-//        // TODO parametrize distances
-//        hops.add(new StopHop<>(tsA, tsB, distances[a][b]));
-//        hops.add(new StopHop<>(tsB, tsC, distances[b][c]));
-//        hops.add(new StopHop<>(tsC, tsD, distances[c][d]));
-//        hops.add(new StopHop<>(tsD, tsC, distances[d][c]));
-//        hops.add(new StopHop<>(tsD, tsE, distances[d][e]));
-//        hops.add(new StopHop<>(tsA, tsD, distances[a][d]));
-//        hops.add(new StopHop<>(tsC, tsE, distances[c][e]));
-//        hops.add(new StopHop<>(tsE, tsB, distances[e][b]));
-//        hops.add(new StopHop<>(tsA, tsE, distances[a][e]));
+        tsA = new TrainStop("A");
+        tsB = new TrainStop("B");
+        tsC = new TrainStop("C");
+        tsD = new TrainStop("D");
+        tsE = new TrainStop("E");
 
         RouteMapBuilder<TrainStop> builder = new RouteMapBuilder<TrainStop>(new MinimumPathBuilder<>(),
                 new DFSPathTraversal<>()).fromString("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7", TrainStop::new);
@@ -83,14 +71,7 @@ class RouteMapTest {
                 distances[e][b] +
                 distances[b][c]);
 
-        var config = PathTraversalConfigurationBuilder
-                .emptyConfiguration()
-                .withMaximumHops(3)
-                .beginWith(tsC)
-                .endWith(tsC)
-                .build();
-
-        List<Route<TrainStop>> routes = routeMap.getRoutes(config);
+        List<Route<TrainStop>> routes = routeMap.from(tsC).to(tsC).maxStops(3).get();
 
         assertEquals(2, routes.size());
 
@@ -100,111 +81,54 @@ class RouteMapTest {
 
     @Test
     void numberOfTripsStartingAtCandEndWithClessDistance30() {
-
-        var config = PathTraversalConfigurationBuilder
-                .emptyConfiguration()
-                .withMaximumCost(29)
-                .beginWith(tsC)
-                .endWith(tsC)
-                .build();
-
-        List<Route<TrainStop>> routes = routeMap.getRoutes(config);
+        List<Route<TrainStop>> routes = routeMap.from(tsC).to(tsC).maxDistance(29).get();
         assertEquals(7, routes.size());
     }
 
     @Test
     void numberOfTripsStartingAtAandEndWithCExaclty3stops() {
-
-        var config = PathTraversalConfigurationBuilder
-                .emptyConfiguration()
-                .withExactlyHops(4)
-                .beginWith(tsA)
-                .endWith(tsC)
-                .build();
-
-        List<Route<TrainStop>> routes = routeMap.getRoutes(config);
+        List<Route<TrainStop>> routes = routeMap.from(tsA).to(tsC).exactlyStops(4).get();
         assertEquals(3, routes.size());
     }
 
     @Test
     void distanceOfRouteABCShouldBeN() {
-        var config = PathTraversalConfigurationBuilder
-                .defaultConfiguration()
-                .withExactlySequence(tsA, tsB, tsC)
-                .build();
-
         int expectedDistance = distances[a][b] + distances[b][c];
-
-        List<Route<TrainStop>> routeABC = routeMap.getRoutes(config);
-
+        List<Route<TrainStop>> routeABC = routeMap.sequence(tsA, tsB, tsC).get();
         assertEquals(expectedDistance, routeABC.get(0).getTotalCost());
     }
 
     @Test
     void distanceOfRouteADShouldBeN() {
-        var config = PathTraversalConfigurationBuilder
-                .defaultConfiguration()
-                .withExactlySequence(tsA, tsD)
-                .build();
-
         int expectedDistance = distances[a][d];
-
-        List<Route<TrainStop>> routeABC = routeMap.getRoutes(config);
-
+        List<Route<TrainStop>> routeABC = routeMap.sequence(tsA, tsD).get();
         assertEquals(expectedDistance, routeABC.get(0).getTotalCost());
     }
 
     @Test
     void numberOfRoutesABCShouldBe1() {
-        var config = PathTraversalConfigurationBuilder
-                .defaultConfiguration()
-                .withExactlySequence(tsA, tsB, tsC)
-                .build();
-
-        List<Route<TrainStop>> route = routeMap.getRoutes(config);
-
+        List<Route<TrainStop>> route = routeMap.sequence(tsA, tsB, tsC).get();
         assertTrue(route.size() == 1);
     }
 
     @Test
     void distanceOfRouteADCShouldBeN() {
-        var config = PathTraversalConfigurationBuilder
-                .defaultConfiguration()
-                .withExactlySequence(tsA, tsD, tsC)
-                .build();
-
         int expectedDistance = distances[a][d] + distances[d][c];
-
-        List<Route<TrainStop>> route = routeMap.getRoutes(config);
-
+        List<Route<TrainStop>> route = routeMap.sequence(tsA, tsD, tsC).get();
         assertEquals(expectedDistance, route.get(0).getTotalCost());
     }
 
     @Test
     void distanceOfRouteAEBCDShouldBeN() {
-        var config = PathTraversalConfigurationBuilder
-                .defaultConfiguration()
-                .withExactlySequence(tsA, tsE, tsB, tsC, tsD)
-                .build();
-
         int expectedDistance = distances[a][e] + distances[e][b] + distances[b][c] + distances[c][d];
-
-        List<Route<TrainStop>> route = routeMap.getRoutes(config);
-
+        List<Route<TrainStop>> route = routeMap.sequence(tsA, tsE, tsB, tsC, tsD).get();
         assertEquals(expectedDistance, route.get(0).getTotalCost());
     }
 
     @Test
     void routeAEDShouldNotExist() {
-        var config = PathTraversalConfigurationBuilder
-                .defaultConfiguration()
-                .withExactlySequence(tsA, tsE, tsD)
-                .build();
-
-        List<Route<TrainStop>> route = routeMap.getRoutes(config);
-
+        List<Route<TrainStop>> route = routeMap.sequence(tsA, tsE, tsD).get();
         assertTrue(route.isEmpty());
-
     }
 
 

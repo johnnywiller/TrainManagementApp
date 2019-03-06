@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 class DefaultIncidenceNode<T extends Vertex> extends IncidenceNode<T> {
 
     public DefaultIncidenceNode(T fromNode, T node, @NonNull Integer cost) {

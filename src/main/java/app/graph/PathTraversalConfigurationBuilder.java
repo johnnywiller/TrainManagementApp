@@ -28,7 +28,7 @@ public class PathTraversalConfigurationBuilder<T extends Vertex> {
 
     private Integer limit;
 
-    private static final Integer DEFAULT_COST = 20;
+    private static final Integer DEFAULT_COST = 100;
 
     private static final Integer MINIMUM_COST = 0;
 
@@ -154,6 +154,43 @@ public class PathTraversalConfigurationBuilder<T extends Vertex> {
     private static void ensureMinimumHops(Integer hops) {
         if (hops < MINIMUM_HOPS)
             throw new IllegalArgumentException("Invalid hops. Minimum hops is " + MINIMUM_HOPS);
+    }
+
+    public String printCurrentConfig() {
+
+        var sConfig = new StringBuilder();
+
+        if (Objects.nonNull(beginWith))
+            sConfig.append(String.format("Begin with: %s\n", beginWith));
+
+        if (Objects.nonNull(endWith))
+            sConfig.append(String.format("End with: %s\n", endWith));
+
+        if (Objects.nonNull(beginWithSequence))
+            sConfig.append(String.format("Begin with Sequence: %s\n", beginWithSequence));
+
+        if (Objects.nonNull(minimumCost))
+            sConfig.append(String.format("Minimum cost: %s\n", minimumCost));
+
+        if (Objects.nonNull(maximumCost))
+            sConfig.append(String.format("Maximum cost: %s\n", maximumCost));
+
+        if (Objects.nonNull(minimumHops))
+            sConfig.append(String.format("Minimum hops: %s\n", minimumHops));
+
+        if (Objects.nonNull(maximumHops))
+            sConfig.append(String.format("Maximum hops: %s\n", maximumHops));
+
+        if (Objects.nonNull(exactlyCost))
+            sConfig.append(String.format("Exactly cost: %s\n", exactlyCost));
+
+        if (Objects.nonNull(exactlyHops))
+            sConfig.append(String.format("Exactly hops: %s\n", exactlyHops));
+
+        if (Objects.nonNull(limit))
+            sConfig.append(String.format("Limit: %s\n", limit));
+
+        return sConfig.toString();
     }
 
 }
