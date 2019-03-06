@@ -3,6 +3,7 @@ package app.graph;
 import app.graph.Interface.Vertex;
 import lombok.ToString;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 @ToString
@@ -167,7 +168,7 @@ public class PathTraversalConfigurationBuilder<T extends Vertex> {
             sConfig.append(String.format("End with: %s\n", endWith));
 
         if (Objects.nonNull(beginWithSequence))
-            sConfig.append(String.format("Begin with Sequence: %s\n", beginWithSequence));
+            sConfig.append(String.format("Begin with Sequence: %s\n", Arrays.asList(beginWithSequence)));
 
         if (Objects.nonNull(minimumCost))
             sConfig.append(String.format("Minimum cost: %s\n", minimumCost));
