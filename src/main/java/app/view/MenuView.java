@@ -22,7 +22,6 @@ public class MenuView {
     private GraphParser<TrainStop> parser;
 
     public MenuView() {
-
         this.sc = new Scanner(System.in);
         this.parser = new DefaultParser<>();
     }
@@ -34,12 +33,10 @@ public class MenuView {
         buildRouteMap();
 
         while (true) {
-
             showCurrentConfig();
             showOptions();
             readOptions();
         }
-
     }
 
     private void buildRouteMap() {
@@ -86,43 +83,56 @@ public class MenuView {
 
     private void readOptions() {
 
-        var line = sc.nextLine();
+        var read = false;
 
-        var option = parseOption(line);
+        while (!read) {
 
-        switch (option.option) {
-            case 1:
-                routeMap = routeMap.from(option.stops.get(0));
-                break;
-            case 2:
-                routeMap = routeMap.to(option.stops.get(0));
-                break;
-            case 3:
-                routeMap = routeMap.maxDistance(option.value);
-                break;
-            case 4:
-                routeMap = routeMap.maxStops(option.value);
-                break;
-            case 5:
-                routeMap = routeMap.exactlyDistance(option.value);
-                break;
-            case 6:
-                routeMap = routeMap.exactlyStops(option.value);
-                break;
-            case 7:
-                showMinimumWeight(option.stops.get(0), option.stops.get(1));
-                break;
-            case '8':
-                routeMap = routeMap.sequence(option.stops.toArray(TrainStop[]::new));
-                break;
-            case '9':
-                clearConfig();
-                break;
-            case '0':
-                showResults();
-                break;
-            default:
-                System.out.println("Invalid Option");
+            var line = sc.nextLine();
+
+            Option option = null;
+
+            try {
+                option = parseOption(line);
+                read = true;
+            } catch (IllegalArgumentException e) {
+                System.out.println(String.format("Error on read option: %s",e.getMessage()));
+                continue;
+            }
+
+            switch (option.option) {
+                case 1:
+                    routeMap = routeMap.from(option.stops.toArray(TrainStop[]::new));
+                    break;
+                case 2:
+                    routeMap = routeMap.to(option.stops.get(0));
+                    break;
+                case 3:
+                    routeMap = routeMap.maxDistance(option.value);
+                    break;
+                case 4:
+                    routeMap = routeMap.maxStops(option.value);
+                    break;
+                case 5:
+                    routeMap = routeMap.exactlyDistance(option.value);
+                    break;
+                case 6:
+                    routeMap = routeMap.exactlyStops(option.value);
+                    break;
+                case 7:
+                    showMinimumWeight(option.stops.get(0), option.stops.get(1));
+                    break;
+                case 8:
+                    routeMap = routeMap.sequence(option.stops.toArray(TrainStop[]::new));
+                    break;
+                case 9:
+                    clearConfig();
+                    break;
+                case 0:
+                    showResults();
+                    break;
+                default:
+                    System.out.println("Invalid Option");
+            }
         }
     }
 
@@ -171,11 +181,11 @@ public class MenuView {
 
     private void showOptions() {
 
-        System.out.println("Enter the option number as N p, N is the option and p the required parameter");
-        System.out.println("Example '1 A' to begin from A");
-        System.out.println("Option 7 and 8 accept more than one argument");
+        System.out.println("Enter the option number as O p..., O is the option and p are the required parameters");
+        System.out.println("Example '1 A,B' to begin from A,B");
+        System.out.println("Option 1,7 and 8 accept more than one argument, all the others accepts only one argument");
 
-        System.out.println("1 - BEGIN WITH");
+        System.out.println("1 A,B,C... - BEGIN WITH SEQUENCE");
         System.out.println("2 - END WITH");
         System.out.println("3 - MAXIMUM DISTANCE");
         System.out.println("4 - MAXIMUM STOPS");
@@ -188,57 +198,80 @@ public class MenuView {
 
     }
 
-    private Option parseOption(String line) {
+    private Option parseOption(String line) throws IllegalArgumentException {
 
         if (Objects.isNull(line) || line.isBlank())
             throw new IllegalArgumentException("Invalid Option");
 
-        var op = new Option();
+        var regexOneNode = "[a-zA-Z]";
+        var regexTwoNode = "[a-zA-Z],[a-zA-Z]";
+        var regexMultiNode = "(([a-zA-Z],)|([a-zA-Z])$)+";
+        var regexNumber = "\\d{1,3}";
 
-        switch (line.charAt(0)) {
+        var op = new Option();
+        var _op = line.charAt(0);
+        line = line.substring(1).strip();
+
+        switch (_op) {
 
             case '1':
+                if (!line.matches(regexMultiNode))
+                    throw new IllegalArgumentException("Invalid string. Must provide at least one node");
                 op.option = 1;
-                op.stops = parser.parseNodes(line.substring(1), TrainStop::new);
+                op.stops = parser.parseNodes(line, TrainStop::new);
                 break;
             case '2':
+                if (!line.matches(regexOneNode))
+                    throw new IllegalArgumentException("Invalid string. Must provide exactly one node");
                 op.option = 2;
-                op.stops = parser.parseNodes(line.substring(1), TrainStop::new);
+                op.stops = parser.parseNodes(line, TrainStop::new);
                 break;
             case '3':
+                if (!line.matches(regexNumber))
+                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
                 op.option = 3;
-                op.value = Integer.parseInt(line.substring(2));
+                op.value = Integer.parseInt(line);
                 break;
             case '4':
+                if (!line.matches(regexNumber))
+                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
                 op.option = 4;
-                op.value = Integer.parseInt(line.substring(2));
+                op.value = Integer.parseInt(line);
                 break;
             case '5':
+                if (!line.matches(regexNumber))
+                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
                 op.option = 5;
-                op.value = Integer.parseInt(line.substring(2));
+                op.value = Integer.parseInt(line);
                 break;
             case '6':
+                if (!line.matches(regexNumber))
+                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
                 op.option = 6;
-                op.value = Integer.parseInt(line.substring(2));
+                op.value = Integer.parseInt(line);
                 break;
             case '7':
+                if (!line.matches(regexTwoNode))
+                    throw new IllegalArgumentException("Invalid string. Must provide two nodes");
                 op.option = 7;
-                op.stops = parser.parseNodes(line.substring(1), TrainStop::new);
+                op.stops = parser.parseNodes(line, TrainStop::new);
                 break;
             case '8':
+                if (!line.matches(regexMultiNode))
+                    throw new IllegalArgumentException("Invalid string. Must provide at least one node");
                 op.option = 8;
-                op.stops = parser.parseNodes(line.substring(1), TrainStop::new);
+                op.stops = parser.parseNodes(line, TrainStop::new);
                 break;
             case '9':
-                clearConfig();
+                op.option = 9;
                 break;
 
             case '0':
-                showResults();
+                op.option = 0;
                 break;
 
             default:
-                System.out.println("Invalid Option");
+                throw new IllegalArgumentException("Invalid Option");
         }
 
         return op;

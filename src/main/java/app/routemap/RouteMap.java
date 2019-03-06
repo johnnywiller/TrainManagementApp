@@ -52,8 +52,8 @@ public class RouteMap<T extends Vertex> {
         return currentConfig.printCurrentConfig();
     }
 
-    public RouteMap<T> from(T begin) {
-        this.currentConfig = this.currentConfig.beginWith(begin);
+    public RouteMap<T> from(T... begin) {
+        this.currentConfig = this.currentConfig.beginWithSequence(begin);
         return this;
     }
 

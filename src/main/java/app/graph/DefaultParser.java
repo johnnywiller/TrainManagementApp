@@ -53,6 +53,12 @@ public class DefaultParser<T extends Vertex> implements GraphParser<T> {
         return incidenceMatrix;
     }
 
+    /**
+     *
+     * @param sNodes
+     * @param supplier
+     * @return
+     */
     public List<T> parseNodes(String sNodes, Supplier<T> supplier) {
 
         var nodes = new ArrayList<T>();
@@ -76,13 +82,13 @@ public class DefaultParser<T extends Vertex> implements GraphParser<T> {
     private void checkStringValidity(String string, String regEx) {
 
         if (Objects.isNull(string) || string.isBlank()) {
-            throw new IllegalArgumentException("Invalid graph");
+            throw new IllegalArgumentException("Invalid string");
         }
 
         string = string.replaceAll("\\s", "");
 
         if (!string.matches(regEx))
-            throw new IllegalArgumentException("Invalid graph");
+            throw new IllegalArgumentException("Invalid string");
 
     }
 
