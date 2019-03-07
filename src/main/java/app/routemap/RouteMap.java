@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 public class RouteMap<T extends Vertex> {
@@ -41,7 +42,8 @@ public class RouteMap<T extends Vertex> {
     }
 
     public Integer minimumDistanceFrom(T from, T to) {
-        return minimumIncidenceMatrix.getIncidence(from, to).getCost();
+        var incidence = minimumIncidenceMatrix.getIncidence(from, to);
+        return Objects.nonNull(incidence) ? incidence.getCost() : null;
     }
 
     public void resetConfig() {

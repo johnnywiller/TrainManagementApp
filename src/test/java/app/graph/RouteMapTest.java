@@ -4,9 +4,13 @@ import app.routemap.Route;
 import app.routemap.RouteMap;
 import app.routemap.RouteMapBuilder;
 import app.routemap.TrainStop;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -129,6 +133,10 @@ class RouteMapTest {
     void routeAEDShouldNotExist() {
         List<Route<TrainStop>> route = routeMap.sequence(tsA, tsE, tsD).get();
         assertTrue(route.isEmpty());
+    }
+    @Test
+    void shouldHaveNoSuchRoute() {
+        assertEquals(null, routeMap.minimumDistanceFrom(tsA, tsA));
     }
 
 

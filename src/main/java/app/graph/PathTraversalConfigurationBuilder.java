@@ -29,7 +29,7 @@ public class PathTraversalConfigurationBuilder<T extends Vertex> {
 
     private Integer limit;
 
-    private static final Integer DEFAULT_COST = 100;
+    private static final Integer DEFAULT_COST = 30;
 
     private static final Integer MINIMUM_COST = 0;
 

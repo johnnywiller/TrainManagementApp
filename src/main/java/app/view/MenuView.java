@@ -1,8 +1,6 @@
 package app.view;
 
 import app.graph.DFSPathTraversal;
-import app.graph.DefaultParser;
-import app.graph.Interface.GraphParser;
 import app.graph.MinimumPathBuilder;
 import app.routemap.Route;
 import app.routemap.RouteMap;
@@ -19,11 +17,8 @@ public class MenuView {
 
     private Scanner sc;
 
-    private GraphParser<TrainStop> parser;
-
     public MenuView() {
         this.sc = new Scanner(System.in);
-        this.parser = new DefaultParser<>();
     }
 
     public void show() {
@@ -58,9 +53,7 @@ public class MenuView {
                 System.out.println("Invalid graph string:" + e.getMessage());
             }
         }
-
         System.out.println("ROUTE MAP READY!");
-
     }
 
     private void showHelp() {
@@ -92,7 +85,7 @@ public class MenuView {
             Option option = null;
 
             try {
-                option = parseOption(line);
+                option = OptionParser.parseOption(line);
                 read = true;
             } catch (IllegalArgumentException e) {
                 System.out.println(String.format("Error on read option: %s",e.getMessage()));
@@ -137,7 +130,13 @@ public class MenuView {
     }
 
     private void showMinimumWeight(TrainStop from, TrainStop to) {
-        System.out.println(String.format("Distance from %s to %s = %d", from, to, routeMap.minimumDistanceFrom(from, to)));
+        System.out.println("---------------RESULT--------------------");
+        var minimum = routeMap.minimumDistanceFrom(from, to);
+        if (Objects.isNull(minimum))
+            System.out.println("NO SUCH ROUTE");
+        else
+            System.out.println(String.format("Distance from %s to %s = %d", from, to, minimum));
+        System.out.println("-----------------------------------------");
     }
 
     private void clearConfig() {
@@ -148,7 +147,7 @@ public class MenuView {
 
         try {
 
-            System.out.println("-----------------------------------------");
+            System.out.println("---------------RESULT--------------------");
 
             List<Route<TrainStop>> routes = routeMap.get();
 
@@ -163,7 +162,6 @@ public class MenuView {
             System.out.println("Error when creating route - " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     private String readGraph() {
@@ -181,9 +179,9 @@ public class MenuView {
 
     private void showOptions() {
 
-        System.out.println("Enter the option number as O p..., O is the option and p are the required parameters");
-        System.out.println("Example '1 A,B' to begin from A,B");
-        System.out.println("Option 1,7 and 8 accept more than one argument, all the others accepts only one argument");
+        System.out.println("Enter the option number as X p..., X is the option and p are the required parameters");
+        System.out.println("Example '1 A,B' to begin from A,B. 'Or 3 10' to show all paths with maximum distance of 10.");
+        System.out.println("Option 1, 7 and 8 accept more than one argument, all the others accepts only one argument");
 
         System.out.println("1 A,B,C... - BEGIN WITH SEQUENCE");
         System.out.println("2 - END WITH");
@@ -195,97 +193,6 @@ public class MenuView {
         System.out.println("8 A,B,C... - SCTRICLTY PATH");
         System.out.println("9 - CLEAR CONFIGURATION");
         System.out.println("0 - EXECUTE");
-
-    }
-
-    private Option parseOption(String line) throws IllegalArgumentException {
-
-        if (Objects.isNull(line) || line.isBlank())
-            throw new IllegalArgumentException("Invalid Option");
-
-        var regexOneNode = "[a-zA-Z]";
-        var regexTwoNode = "[a-zA-Z],[a-zA-Z]";
-        var regexMultiNode = "(([a-zA-Z],)|([a-zA-Z])$)+";
-        var regexNumber = "\\d{1,3}";
-
-        var op = new Option();
-        var _op = line.charAt(0);
-        line = line.substring(1).strip();
-
-        switch (_op) {
-
-            case '1':
-                if (!line.matches(regexMultiNode))
-                    throw new IllegalArgumentException("Invalid string. Must provide at least one node");
-                op.option = 1;
-                op.stops = parser.parseNodes(line, TrainStop::new);
-                break;
-            case '2':
-                if (!line.matches(regexOneNode))
-                    throw new IllegalArgumentException("Invalid string. Must provide exactly one node");
-                op.option = 2;
-                op.stops = parser.parseNodes(line, TrainStop::new);
-                break;
-            case '3':
-                if (!line.matches(regexNumber))
-                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
-                op.option = 3;
-                op.value = Integer.parseInt(line);
-                break;
-            case '4':
-                if (!line.matches(regexNumber))
-                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
-                op.option = 4;
-                op.value = Integer.parseInt(line);
-                break;
-            case '5':
-                if (!line.matches(regexNumber))
-                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
-                op.option = 5;
-                op.value = Integer.parseInt(line);
-                break;
-            case '6':
-                if (!line.matches(regexNumber))
-                    throw new IllegalArgumentException("Invalid string. Must provide one number from 0-999");
-                op.option = 6;
-                op.value = Integer.parseInt(line);
-                break;
-            case '7':
-                if (!line.matches(regexTwoNode))
-                    throw new IllegalArgumentException("Invalid string. Must provide two nodes");
-                op.option = 7;
-                op.stops = parser.parseNodes(line, TrainStop::new);
-                break;
-            case '8':
-                if (!line.matches(regexMultiNode))
-                    throw new IllegalArgumentException("Invalid string. Must provide at least one node");
-                op.option = 8;
-                op.stops = parser.parseNodes(line, TrainStop::new);
-                break;
-            case '9':
-                op.option = 9;
-                break;
-
-            case '0':
-                op.option = 0;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Invalid Option");
-        }
-
-        return op;
-    }
-
-
-
-    private class Option {
-
-        int option;
-
-        int value;
-
-        List<TrainStop> stops;
 
     }
 
