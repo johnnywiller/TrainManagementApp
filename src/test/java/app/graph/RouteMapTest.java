@@ -4,13 +4,9 @@ import app.routemap.Route;
 import app.routemap.RouteMap;
 import app.routemap.RouteMapBuilder;
 import app.routemap.TrainStop;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +40,7 @@ class RouteMapTest {
         tsD = new TrainStop("D");
         tsE = new TrainStop("E");
 
-        RouteMapBuilder<TrainStop> builder = new RouteMapBuilder<TrainStop>(new MinimumPathBuilder<>(),
+        RouteMapBuilder<TrainStop> builder = new RouteMapBuilder<TrainStop>(new FloydWarshallMinimumPathBuilder<>(),
                 new DFSPathTraversal<>()).fromString("AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7", TrainStop::new);
 
         routeMap = builder.build();
@@ -92,6 +88,7 @@ class RouteMapTest {
     @Test
     void numberOfTripsStartingAtAandEndWithCExaclty3stops() {
         List<Route<TrainStop>> routes = routeMap.from(tsA).to(tsC).exactlyStops(4).get();
+
         assertEquals(3, routes.size());
     }
 

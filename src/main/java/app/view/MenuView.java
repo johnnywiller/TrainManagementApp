@@ -1,7 +1,7 @@
 package app.view;
 
 import app.graph.DFSPathTraversal;
-import app.graph.MinimumPathBuilder;
+import app.graph.FloydWarshallMinimumPathBuilder;
 import app.routemap.Route;
 import app.routemap.RouteMap;
 import app.routemap.RouteMapBuilder;
@@ -38,7 +38,7 @@ public class MenuView {
 
         var built = false;
 
-        var builder = new RouteMapBuilder<TrainStop>(new MinimumPathBuilder<>(),
+        var builder = new RouteMapBuilder<TrainStop>(new FloydWarshallMinimumPathBuilder<>(),
                 new DFSPathTraversal<>());
 
         while(!built) {

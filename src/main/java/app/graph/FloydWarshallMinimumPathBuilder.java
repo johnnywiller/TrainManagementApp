@@ -1,13 +1,14 @@
 package app.graph;
 
 import app.graph.Interface.IncidenceMatrix;
+import app.graph.Interface.MinimumPathBuilder;
 import app.graph.Interface.Vertex;
 import lombok.Getter;
 
 import java.util.Objects;
 import java.util.Set;
 
-public class MinimumPathBuilder<T extends Vertex> {
+public class FloydWarshallMinimumPathBuilder<T extends Vertex> implements MinimumPathBuilder<T> {
 
     @Getter
     private IncidenceMatrix<T> incidenceMatrix;
