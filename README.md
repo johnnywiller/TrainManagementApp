@@ -58,6 +58,12 @@ List<Route<TrainStop>> routes = routeMap.from(tsA).to(tsC).get();
 This list contains the nodes:
 A -> B -> C with total Cost: 5
 
+Also example:
+
+routeMap.to(tsC).maxDistance(30).maxStops(5).limit(10)
+
+Would return the first 10 routes with ends with C and contains at most distance 30 OR 5 stops (the first condition is what it gets)
+
 From method also accepts an array of nodes, this way it's possible to configure a route to begin with A,D,C for example.
 
 Other possible methods of RouteMap API:
@@ -70,3 +76,7 @@ Other possible methods of RouteMap API:
 #### exactlyDistance(Integer distance) - contains exactly distance
 #### sequence(T... sequence) - contains exaclty this path
 #### limit(Integer limit) - limits the amount of returned routes
+
+
+## How to run the program
+
