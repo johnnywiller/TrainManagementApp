@@ -124,7 +124,7 @@ Option 1, 7 and 8 accept more than one argument, all the others accepts only one
 0 - EXECUTE
 ```
 
-Enter `1 A`, then `2 C` and you should see:
+Enter `1 A`, then `2 C`, then `0` and you should see:
 
 ```
 ---------------RESULT--------------------
