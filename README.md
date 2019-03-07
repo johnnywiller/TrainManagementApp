@@ -79,4 +79,5 @@ Other possible methods of RouteMap API:
 
 
 ## How to run the program
-
+You could run the program directly in an IDE or run with maven.
+Use mvn package, and after mvn exec:java, or without maven java -cp target/train-management-app-1.0-SNAPSHOT.jar app.Main
