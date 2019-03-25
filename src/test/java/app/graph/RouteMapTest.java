@@ -76,22 +76,8 @@ class RouteMapTest {
         assertEquals(2, routes.size());
 
         assertTrue(routes.contains(routeCDC));
-      ---------------RESULT--------------------
-A -> B -> C -> D -> E -> B -> C [Cost: 30]
-A -> B -> C -> D -> C [Cost: 25]
-A -> B -> C -> E -> B -> C -> E -> B -> C [Cost: 27]
-A -> B -> C -> E -> B -> C [Cost: 18]
-A -> B -> C [Cost: 9]
-A -> E -> B -> C -> D -> C [Cost: 30]
-A -> E -> B -> C -> E -> B -> C [Cost: 23]
-A -> E -> B -> C [Cost: 14]
-A -> D -> E -> B -> C -> E -> B -> C [Cost: 27]
-A -> D -> E -> B -> C [Cost: 18]
-A -> D -> C -> D -> C [Cost: 29]
-A -> D -> C -> E -> B -> C [Cost: 22]
-A -> D -> C [Cost: 13]
------------------------------------------
-  assertTrue(routes.contains(routeCEBC));
+
+        assertTrue(routes.contains(routeCEBC));
     }
 
     @Test
